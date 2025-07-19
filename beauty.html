@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beauty Products - Vidhya</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fdf5f8;
+    }
+    header {
+      background-color: #e91e63;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    section {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    section h2 {
+      margin-top: 0;
+      color: #e91e63;
+      border-bottom: 2px solid #e91e63;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 12px;
+      text-align: center;
+    }
+    .card-body h3 {
+      margin: 8px 0 4px;
+      font-size: 18px;
+    }
+    .card-body p.price {
+      margin: 4px 0;
+      color: #4caf50;
+      font-weight: bold;
+    }
+    .card-body button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .card-body button:hover {
+      background-color: #c2185b;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:right;margin:18px 30px 0 0;">
+    <a href="wishlist.html" style="color:#ff3f6c;font-weight:bold;font-size:20px;text-decoration:none;">❤️ My Wishlist</a>
+  </div>
+
+  <header>
+    <h1>Vidhya ‑ Beauty Products</h1>
+  </header>
+
+  <section>
+    <h2>Top Beauty Picks</h2>
+    <div class="grid" id="beautyGrid"></div>
+    <script>
+      const beauty = [
+        {name:'Matte Lipstick', img:'https://i.pinimg.com/1200x/7e/06/56/7e06566ae50247ede5e47233502a3fcf.jpg', price:399},
+        {name:'Liquid Foundation', img:'https://i.pinimg.com/1200x/35/9d/4b/359d4bef5104e7ec64421678f1e40c9f.jpg', price:549},
+        {name:'Compact Powder', img:'https://i.pinimg.com/1200x/5f/30/15/5f301519d6c1a539582eea2bef663208.jpg', price:299},
+        {name:'Eye Shadow Palette', img:'https://i.pinimg.com/1200x/18/3e/93/183e934a480dcb9ff06ed5918b5c7a80.jpg', price:749},
+        {name:'Blush Palette', img:'https://i.pinimg.com/1200x/b4/f8/33/b4f83332e52376d4943cd4018ddbc82d.jpg', price:449},
+        {name:'Nail Polish Set', img:'https://i.pinimg.com/736x/eb/96/48/eb9648b092e5701803df25ee35936b0a.jpg', price:199},
+        {name:'Face Serum', img:'https://i.pinimg.com/736x/19/e4/36/19e436dc1d3673baee64ee857b6be0f4.jpg', price:899},
+        {name:'Kajal & Eyeliner', img:'https://i.pinimg.com/1200x/0b/aa/da/0baada3aebdb843ba44b44c15f2677ef.jpg', price:249},
+        {name:'Makeup Brush Set', img:'https://i.pinimg.com/1200x/f2/f3/51/f2f351e4527b019f5f74d8b582d34ff3.jpg', price:699},
+        {name:'Aloe Vera Gel', img:'https://i.pinimg.com/736x/55/6f/e8/556fe8f3142c0f210dbb502b3212e55d.jpg', price:199}
+      ];
+      const grid = document.getElementById('beautyGrid');
+      grid.innerHTML = '';
+      beauty.forEach(item => {
+        const discount = Math.round(item.price * 0.10); // 10% discount
+        const discountedPrice = item.price - discount;
+        grid.innerHTML += `
+          <div class="card">
+            <img src="${item.img}" alt="${item.name}">
+            <div class="card-body">
+              <h3>${item.name}</h3>
+              <p class="price">
+                <span style='text-decoration:line-through;color:#aaa;'>₹${item.price}</span> 
+                <span style='color:#4caf50;font-weight:bold;'>₹${discountedPrice}</span> 
+                <span style='color:orange;'>(₹${discount} OFF)</span>
+              </p>
+              <button onclick="addToCart('${item.name}', ${discountedPrice}, '${item.img}', ${discount}, ${item.price})">Add to Cart</button>
+              <button onclick="buyNow('${item.name}', ${discountedPrice}, '${item.img}', ${discount}, ${item.price})" style="background:#ff9800;margin-left:8px;">Buy Now</button>
+            </div>
+          </div>
+        `;
+      });
+
+      function addToCart(name, price, img, discount, original) {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push({ name, price, image: img, discount, original });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        window.location.href = 'cart.html';
+      }
+      function buyNow(name, price, img, discount, original) {
+        const selectedItem = { name, price, image: img, discount, original };
+        localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
+        window.location.href = 'checkout.html';
+      }
+    </script>
+    </div>
+  </section>
+</body>
+</html>

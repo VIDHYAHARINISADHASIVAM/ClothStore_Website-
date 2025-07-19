@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop - Cloth Store</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f9f9f9; }
+    h2 { color: #d63384; }
+    .product { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px; background: #fff; }
+    .product img { width: 120px; }
+    #cart { border: 1px solid #aaa; padding: 15px; margin-top: 20px; background: #fff; }
+    .cart-item { border-bottom: 1px solid #ccc; padding: 5px 0; }
+    input, textarea { display: block; margin: 5px 0 10px; padding: 8px; width: 300px; }
+    button { padding: 10px 20px; margin: 5px 0; background: #d63384; color: white; border: none; cursor: pointer; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h2>🛍 Welcome to Vidhya Cloth Store</h2>
+  <button onclick="window.location.href='cart.html'" 
+    style="float:right; margin-bottom:20px; background:#28a745; color:white; border:none; border-radius:5px; padding:10px 20px; font-size:16px; cursor:pointer;">
+    🛒 Cart
+  </button>
+
+  <div style="margin: 20px 0; text-align: center;">
+    <a href="wishlist.html" style="display:inline-block;margin-right:20px;font-size:20px;color:#ff3f6c;text-decoration:none;font-weight:bold;">❤️ My Wishlist</a>
+    <select id="categorySelect" onchange="onCategoryChange()">
+      <option value="">All Categories</option>
+    </select>
+    <select id="subcategorySelect" onchange="loadProducts()">
+      <option value="">All Subcategories</option>
+    </select>
+  </div>
+  <div id="productList"></div>
+
+  <script>
+    let allProducts = [];
+    async function fetchCategories() {
+      const res = await fetch('/api/products');
+      const products = await res.json();
+      allProducts = products;
+      const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+      const categorySelect = document.getElementById('categorySelect');
+      categorySelect.innerHTML = '<option value="">All Categories</option>' +
+        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+      updateSubcategories();
+    }
+    function updateSubcategories() {
+      const selectedCategory = document.getElementById('categorySelect').value;
+      let subcategories = allProducts
+        .filter(p => !selectedCategory || p.category === selectedCategory)
+        .map(p => p.subcategory)
+        .filter(Boolean);
+      subcategories = [...new Set(subcategories)];
+      const subcategorySelect = document.getElementById('subcategorySelect');
+      subcategorySelect.innerHTML = '<option value="">All Subcategories</option>' +
+        subcategories.map(sc => `<option value="${sc}">${sc}</option>`).join('');
+    }
+    function onCategoryChange() {
+      updateSubcategories();
+      loadProducts();
+    }
+    async function loadProducts() {
+      const category = document.getElementById('categorySelect').value;
+      const subcategory = document.getElementById('subcategorySelect').value;
+      let url = '/api/products';
+      const params = [];
+      if (category) params.push(`category=${encodeURIComponent(category)}`);
+      if (subcategory) params.push(`subcategory=${encodeURIComponent(subcategory)}`);
+      if (params.length) url += '?' + params.join('&');
+      const res = await fetch(url);
+      const products = await res.json();
+      const list = document.getElementById('productList');
+      list.innerHTML = '';
+      products.forEach(p => {
+        list.innerHTML += `
+          <div class="product">
+            <img src="${p.image}" alt="${p.name}" />
+            <h4>${p.name}</h4>
+            <p>₹${p.price} | ${p.category} ${p.subcategory ? ' - ' + p.subcategory : ''}</p>
+            <p>${p.description}</p>
+            <p><strong>In Stock:</strong> ${p.quantity > 0 ? p.quantity : '<span style=\'color:red\'>Out of Stock</span>'}</p>
+            <button onclick="addToCart('${p._id}', '${p.name}', ${p.price}, '${p.image}')">Add to Cart</button>
+            <button onclick="buyNow('${p._id}', '${p.name}', ${p.price}, '${p.image}', ${p.quantity})" ${p.quantity === 0 ? 'disabled' : ''}>Buy Now</button>
+            <button onclick="addToWishlist('${p._id}')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#ff3f6c;">❤️</button>
+          </div>
+        `;
+      });
+    }
+
+    function addToCart(id, name, price, image) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = cart.find(item => item.productId === id);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ productId: id, name, quantity: 1, price, image });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Item added to cart!');
+    }
+
+    function buyNow(id, name, price, image, quantity) {
+      if (quantity === 0) {
+        alert('This product is out of stock!');
+        return;
+      }
+      const selectedItem = { _id: id, name, price, image };
+      localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
+      window.location.href = 'checkout.html';
+    }
+
+    function getUserEmail() {
+      let email = localStorage.getItem('userEmail');
+      if (!email) {
+        email = prompt('Enter your email to use wishlist:');
+        if (email) localStorage.setItem('userEmail', email);
+      }
+      return email;
+    }
+    async function addToWishlist(productId) {
+      const email = getUserEmail();
+      if (!email) return alert('Email required for wishlist.');
+      const res = await fetch('/api/wishlist/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, productId })
+      });
+      const data = await res.json();
+      alert(data.message || 'Added to wishlist!');
+    }
+
+    window.onload = function() {
+      fetchCategories();
+      loadProducts();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kids Fashion - Vidhya</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+    }
+    header {
+      background-color: #ff6f61;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      text-align: center;
+      z-index: 100;
+    }
+    nav button {
+      margin: 0 8px;
+      padding: 8px 16px;
+      border: none;
+      background: #ff6f61;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    nav button:hover {
+      background: #e85c50;
+    }
+    section {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+    section h2 {
+      margin-top: 0;
+      color: #ff6f61;
+      border-bottom: 2px solid #ff6f61;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 12px;
+      text-align: center;
+    }
+    .card-body h3 {
+      margin: 8px 0 4px;
+      font-size: 18px;
+    }
+    .card-body p.price {
+      margin: 4px 0;
+      color: #28a745;
+      font-weight: bold;
+    }
+    .card-body button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .card-body button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:right;margin:18px 30px 0 0;">
+    <a href="wishlist.html" style="color:#ff3f6c;font-weight:bold;font-size:20px;text-decoration:none;">❤️ My Wishlist</a>
+  </div>
+
+  <header>
+    <h1>Vidhya ‑ Kids' Collections</h1>
+  </header>
+
+  <nav>
+    <button onclick="scrollToSection('girls')">Girls</button>
+    <button onclick="scrollToSection('boys')">Boys</button>
+    <button onclick="scrollToSection('newborn')">Newborns</button>
+  </nav>
+
+  <!-- Girls Section -->
+  <section id="girls">
+    <h2>Girls Collection</h2>
+    <div class="grid">
+      <script>
+        // Helper functions for all sections
+        function addToCart(name, price, imageURL, stock, discount) {
+          if (stock === 0) {
+            alert('This product is out of stock!');
+            return;
+          }
+          const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          cart.push({ name, price, image: imageURL, stock, discount });
+          localStorage.setItem("cart", JSON.stringify(cart));
+          window.location.href = "cart.html";
+        }
+        function buyNow(name, price, imageURL, stock, discount) {
+          if (stock === 0) {
+            alert('This product is out of stock!');
+            return;
+          }
+          const selectedItem = { name, price, image: imageURL, stock, discount };
+          localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
+          window.location.href = 'checkout.html';
+        }
+
+        // Girls
+        const girls = [
+          {name:'Pink Party Frock', img:'https://i.pinimg.com/736x/5e/3e/6e/5e3e6eda43faa7990f4044d42fe8834f.jpg', price:899, stock:10, discount:100, original:999},
+          {name:'Floral Frock', img:'https://i.pinimg.com/1200x/c1/39/03/c13903ac98b51efb068deffbfab504ae.jpg', price:799, stock:7, discount:100, original:899},
+          {name:'Lace Dress', img:'https://i.pinimg.com/1200x/b1/be/01/b1be0167994b1fa8cd1664f951dba948.jpg', price:999, stock:3, discount:200, original:1199},
+          {name:'Tutu Dress', img:'http://i.pinimg.com/1200x/a3/88/f7/a388f76321d720ef60eec000f9de5b8d.jpg', price:1099, stock:0, discount:200, original:1299},
+          {name:'Casual Frock', img:'https://i.pinimg.com/1200x/6d/24/22/6d242251917a6ff8af37fe6847d21f01.jpg', price:699, stock:5, discount:50, original:749},
+          {name:'Birthday Gown', img:'https://i.pinimg.com/736x/06/c6/bc/06c6bc42cafd0d626410eafa3bce4972.jpg', price:1499, stock:2, discount:200, original:1699},
+          {name:'Cotton Frock', img:'https://i.pinimg.com/736x/8a/f1/1f/8af11f698ec7310036fbce48742d289e.jpg', price:599, stock:8, discount:50, original:649},
+          {name:'Ball Gown', img:'https://i.pinimg.com/736x/c3/84/74/c38474ec2a05a6a5505682dfe73def30.jpg', price:1599, stock:4, discount:200, original:1799},
+          {name:'Printed Frock', img:'https://i.pinimg.com/1200x/e3/4f/9e/e34f9e9306953dde7528e2650afe995a.jpg', price:899, stock:6, discount:100, original:999},
+          {name:'Embroidered Dress', img:'https://i.pinimg.com/736x/fd/e4/a3/fde4a3d2d21e5ccd691dc82418eb5abf.jpg', price:1299, stock:0, discount:200, original:1499}
+        ];
+        document.querySelector('#girls .grid').innerHTML = girls.map(it => `
+          <div class='card'>
+            <img src='${it.img}' alt='${it.name}'>
+            <div class='card-body'>
+              <h3>${it.name}</h3>
+              <p class='price'><span style='text-decoration:line-through;color:#aaa;'>₹${it.original}</span> <span style='color:#ff6f61;font-weight:bold;'>₹${it.price}</span> <span style='color:green;'>(₹${it.discount} OFF)</span></p>
+              <p><strong>In Stock:</strong> ${it.stock > 0 ? it.stock : "0 <span style='color:red;'>(Out of Stock)</span>"}</p>
+              <button onclick="addToCart('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Add to Cart</button>
+              <button onclick="buyNow('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Buy Now</button>
+            </div>
+          </div>
+        `).join('');
+      </script>
+    </div>
+  </section>
+
+  <!-- Boys Section -->
+  <section id="boys">
+    <h2>Boys Collection</h2>
+    <div class="grid">
+      <script>
+          const boys = [
+        {name:'Ethnic Sherwani', img:'https://i.pinimg.com/474x/29/c4/e1/29c4e13332c9713eb9c8e7fce216a1d8.jpg', price:1499, stock:5, discount:200, original:1699},
+        {name:'Hoodie & Track', img:'https://i.pinimg.com/736x/e4/7a/57/e47a5793297aa42f33d1cc17c974b7bc.jpg', price:899, stock:8, discount:100, original:999},
+        {name:'Summer Set', img:'https://i.pinimg.com/736x/46/ff/90/46ff90b300252329abf6229b9021ee25.jpg', price:699, stock:10, discount:50, original:749},
+        {name:'Party Wear Dress', img:'https://i.pinimg.com/736x/ff/ad/dc/ffaddc1bd9c132fe89e7af1c7f67ab0d.jpg', price:1599, stock:2, discount:200, original:1799},
+        {name:'T-shirt & Jeans Combo', img:'https://i.pinimg.com/736x/41/63/63/41636326091fcfe366d531495b3b5d7c.jpg', price:999, stock:7, discount:100, original:1099},
+        {name:'T-shirt & Shorts Combo', img:'https://i.pinimg.com/1200x/85/48/ff/8548ffba3ba359a80959e418db8717aa.jpg', price:699, stock:0, discount:100, original:799},
+        {name:'Printed Shirts & Pants Combo', img:'https://i.pinimg.com/1200x/19/33/4e/19334e73ebf4da6b4566df274eeffc77.jpg', price:799, stock:6, discount:100, original:899},
+        {name:'Formal Blazer Set', img:'https://i.pinimg.com/1200x/00/f3/31/00f3318411c53618673affed11722da8.jpg', price:1399, stock:3, discount:200, original:1599},
+        {name:'Denim Set', img:'https://i.pinimg.com/1200x/2d/ec/2d/2dec2d7f6bcb68ddefe4e322e0d00385.jpg', price:899, stock:4, discount:100, original:999},
+        {name:'Kurtha Set', img:'https://i.pinimg.com/1200x/31/58/0e/31580ee286c6bdded4c5ca1cd0614d30.jpg', price:999, stock:0, discount:200, original:1199}
+      ];
+        document.querySelector('#boys .grid').innerHTML = boys.map(it => `
+          <div class='card'>
+            <img src='${it.img}' alt='${it.name}'>
+            <div class='card-body'>
+              <h3>${it.name}</h3>
+              <p class='price'><span style='text-decoration:line-through;color:#aaa;'>₹${it.original}</span> <span style='color:#ff6f61;font-weight:bold;'>₹${it.price}</span> <span style='color:green;'>(₹${it.discount} OFF)</span></p>
+              <p><strong>In Stock:</strong> ${it.stock > 0 ? it.stock : "0 <span style='color:red;'>(Out of Stock)</span>"}</p>
+              <button onclick="addToCart('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Add to Cart</button>
+              <button onclick="buyNow('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Buy Now</button>
+            </div>
+          </div>
+        `).join('');
+      </script>
+    </div>
+  </section>
+
+  <!-- Newborn Section -->
+  <section id="newborn">
+    <h2>Newborn Collection</h2>
+    <div class="grid">
+      <script>
+        const newborn = [
+          {name:'Newborn Baby Set', img:'https://i.pinimg.com/736x/48/6b/d0/486bd05fb222d998a166ea4ee452299c.jpg', price:599, stock:10, discount:50, original:649},
+          {name:'Cotton Wrap Dress', img:'https://i.pinimg.com/1200x/12/ca/98/12ca980a5715b964849f78d234f49957.jpg', price:499, stock:8, discount:50, original:549},
+          {name:'Sleep Suit Dress', img:'https://i.pinimg.com/1200x/75/b2/be/75b2bebbe27ea3c741c9f8afaf6e0a39.jpg', price:699, stock:5, discount:50, original:749},
+          {name:'Oneside Pack', img:'https://i.pinimg.com/1200x/9a/16/be/9a16be38f027d3c8eeacd5c1a5f2817a.jpg', price:799, stock:3, discount:100, original:899},
+          {name:'Knitted Romper', img:'https://i.pinimg.com/736x/21/19/18/2119187572945446aa2a3aa2cbeb5510.jpg', price:899, stock:0, discount:100, original:999},
+          {name:'Animal Printed Shirt', img:'https://i.pinimg.com/1200x/f3/cd/de/f3cdde23ebcf986baecc2314de0c520e.jpg', price:599, stock:6, discount:50, original:649},
+          {name:'Swaddle Set', img:'https://i.pinimg.com/736x/c9/a1/67/c9a167476c4d5bb6c6e6814c27e40a8e.jpg', price:399, stock:8, discount:50, original:449},
+          {name:'Floral Set', img:'https://i.pinimg.com/736x/36/11/a1/3611a189365c737cf3f09f8dc9c01931.jpg', price:699, stock:4, discount:100, original:799},
+          {name:'Winter Suite', img:'https://i.pinimg.com/1200x/f8/bf/0d/f8bf0db912e6d1bd6c14cbf2b4fbef88.jpg', price:999, stock:2, discount:200, original:1199},
+          {name:'Hooded Blanket Set', img:'https://i.pinimg.com/1200x/d3/c2/ba/d3c2baf1af1cf8b1dc2d12d8a50a6607.jpg', price:799, stock:0, discount:100, original:899}
+        ];
+        document.querySelector('#newborn .grid').innerHTML = newborn.map(it => `
+          <div class='card'>
+            <img src='${it.img}' alt='${it.name}'>
+            <div class='card-body'>
+              <h3>${it.name}</h3>
+              <p class='price'><span style='text-decoration:line-through;color:#aaa;'>₹${it.original}</span> <span style='color:#ff6f61;font-weight:bold;'>₹${it.price}</span> <span style='color:green;'>(₹${it.discount} OFF)</span></p>
+              <p><strong>In Stock:</strong> ${it.stock > 0 ? it.stock : "0 <span style='color:red;'>(Out of Stock)</span>"}</p>
+              <button onclick="addToCart('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Add to Cart</button>
+              <button onclick="buyNow('${it.name}', ${it.price}, '${it.img}', ${it.stock}, ${it.discount})" ${it.stock === 0 ? 'disabled' : ''}>Buy Now</button>
+            </div>
+          </div>
+        `).join('');
+      </script>
+    </div>
+  </section>
+
+  <script>
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

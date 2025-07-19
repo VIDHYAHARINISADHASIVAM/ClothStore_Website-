@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Men's Fashion - Vidhya</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+    }
+    header {
+      background-color: #ff3f6c;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .cart-icon {
+      background-color: white;
+      color: #ff3f6c;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    .cart-icon:hover {
+      background-color: #ffe6ec;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 20px;
+      text-align: center;
+    }
+    .card-body h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+    }
+    .card-body p {
+      margin: 10px 0;
+      color: #888;
+      font-size: 18px;
+    }
+    .card-body button {
+      background-color: #ff3f6c;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .card-body button:hover {
+      background-color: #e0335d;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Men's Fashion - New Collections</h1>
+    <div>
+      <a class="cart-icon" href="cart.html">🛒 Cart</a>
+      <a href="wishlist.html" style="color:#ff3f6c;font-weight:bold;margin-left:18px;font-size:20px;text-decoration:none;">❤️ My Wishlist</a>
+    </div>
+  </header>
+
+  <div class="products">
+    <!-- Shirt 1 -->
+    <div class="card">
+      <img src="https://i.pinimg.com/736x/70/c7/14/70c714e8ce4c472f8830112bb0a5aff2.jpg" alt="Pink Shirt">
+      <div class="card-body">
+        <h3>Pink Shirt</h3>
+        <p><span style='text-decoration:line-through;color:#aaa;'>₹999</span> <span style='color:#ff3f6c;font-weight:bold;'>₹799</span> <span style='color:green;'>(₹200 OFF)</span></p>
+        <p><strong>In Stock:</strong> 12</p>
+        <button onclick="addToCart('Pink Shirt', 799, 'https://i.pinimg.com/736x/70/c7/14/70c714e8ce4c472f8830112bb0a5aff2.jpg', 12, 200)">Add to Cart</button>
+        <button onclick="buyNow('Pink Shirt', 799, 'https://i.pinimg.com/736x/70/c7/14/70c714e8ce4c472f8830112bb0a5aff2.jpg', 12, 200)">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Shirt 2 -->
+    <div class="card">
+      <img src="https://i.pinimg.com/1200x/63/fd/bd/63fdbdedb89857e6073bf673e8fc7aff.jpg" alt="Sample Shirt 2">
+      <div class="card-body">
+        <h3>Casual Blue Shirt</h3>
+        <p><span style='text-decoration:line-through;color:#aaa;'>₹1199</span> <span style='color:#ff3f6c;font-weight:bold;'>₹999</span> <span style='color:green;'>(₹200 OFF)</span></p>
+        <p><strong>In Stock:</strong> 8</p>
+        <button onclick="addToCart('Casual Blue Shirt', 999, 'https://i.pinimg.com/1200x/63/fd/bd/63fdbdedb89857e6073bf673e8fc7aff.jpg', 8, 200)">Add to Cart</button>
+        <button onclick="buyNow('Casual Blue Shirt', 999, 'https://i.pinimg.com/1200x/63/fd/bd/63fdbdedb89857e6073bf673e8fc7aff.jpg', 8, 200)">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Shirt 3 -->
+    <div class="card">
+      <img src="https://i.pinimg.com/736x/b1/d8/39/b1d839647c0de41df9080410cb257448.jpg" alt="Sample Shirt 3">
+      <div class="card-body">
+        <h3>White Printed Shirt</h3>
+        <p><span style='text-decoration:line-through;color:#aaa;'>₹1099</span> <span style='color:#ff3f6c;font-weight:bold;'>₹899</span> <span style='color:green;'>(₹200 OFF)</span></p>
+        <p><strong>In Stock:</strong> 5</p>
+        <button onclick="addToCart('White Printed Shirt', 899, 'https://i.pinimg.com/736x/b1/d8/39/b1d839647c0de41df9080410cb257448.jpg', 5, 200)">Add to Cart</button>
+        <button onclick="buyNow('White Printed Shirt', 899, 'https://i.pinimg.com/736x/b1/d8/39/b1d839647c0de41df9080410cb257448.jpg', 5, 200)">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Shirt 4 -->
+    <div class="card">
+      <img src="https://bombayvogue.in/cdn/shop/files/rn-image_picker_lib_temp_6d42d13d-206a-46bc-92dd-ca072aa6cc23.jpg?v=1717819178" alt="Orange Long Sleeve Shirt">
+      <div class="card-body">
+        <h3>Orange Long Sleeve Shirt</h3>
+        <p><span style='text-decoration:line-through;color:#aaa;'>₹1399</span> <span style='color:#ff3f6c;font-weight:bold;'>₹1199</span> <span style='color:green;'>(₹200 OFF)</span></p>
+        <p><strong>In Stock:</strong> 0 <span style='color:red;'>(Out of Stock)</span></p>
+        <button onclick="addToCart('Orange Long Sleeve Shirt', 1199, 'https://bombayvogue.in/cdn/shop/files/rn-image_picker_lib_temp_6d42d13d-206a-46bc-92dd-ca072aa6cc23.jpg?v=1717819178', 0, 200)" disabled>Add to Cart</button>
+        <button onclick="buyNow('Orange Long Sleeve Shirt', 1199, 'https://bombayvogue.in/cdn/shop/files/rn-image_picker_lib_temp_6d42d13d-206a-46bc-92dd-ca072aa6cc23.jpg?v=1717819178', 0, 200)" disabled>Buy Now</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addToCart(name, price, imageURL, stock, discount) {
+      if (stock === 0) {
+        alert('This product is out of stock!');
+        return;
+      }
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({ name, price, image: imageURL, stock, discount });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      window.location.href = "cart.html";
+    }
+    function buyNow(name, price, imageURL, stock, discount) {
+      if (stock === 0) {
+        alert('This product is out of stock!');
+        return;
+      }
+      const selectedItem = { name, price, image: imageURL, stock, discount };
+      localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
+      window.location.href = 'checkout.html';
+    }
+  </script>
+</body>
+</html>

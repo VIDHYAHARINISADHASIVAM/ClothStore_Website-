@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Vidhya</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s cubic-bezier(.4,2,.6,1) 0.1s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    h1 {
+      text-align: center;
+      color: #ff3f6c;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      animation: fadeInUp 1.1s cubic-bezier(.4,2,.6,1) 0.2s forwards;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .section, .product-summary, form, #orderSummary {
+      animation: fadeInUp 1s cubic-bezier(.4,2,.6,1) 0.3s forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .product-summary {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .product-summary img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px #ff3f6c22;
+      transition: box-shadow 0.3s;
+    }
+    .product-summary img:hover {
+      box-shadow: 0 8px 32px #ff3f6c44;
+    }
+    .product-info {
+      flex: 1;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #ff3f6c;
+      transition: color 0.3s;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #ff3f6c;
+      box-shadow: 0 0 0 2px #ff3f6c33;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #ff3f6c;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px #ff3f6c22;
+    }
+    button:hover {
+      background-color: #e0335d;
+      transform: scale(1.04);
+      box-shadow: 0 6px 24px #ff3f6c33;
+    }
+    #cardFields, #upiFields, #netBankingFields {
+      opacity: 0;
+      max-height: 0;
+      pointer-events: none;
+      transition: opacity 0.5s, max-height 0.5s;
+    }
+    #cardFields.show, #upiFields.show, #netBankingFields.show {
+      opacity: 1;
+      max-height: 200px;
+      pointer-events: auto;
+      transition: opacity 0.5s, max-height 0.5s;
+    }
+    .payment-methods {
+      border:1px solid #eee;
+      border-radius:10px;
+      padding:16px;
+      margin-bottom:20px;
+      background: linear-gradient(90deg, #fff 60%, #ffe3ec 100%);
+      box-shadow: 0 2px 12px #ff3f6c11;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+    }
+    .pay-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 0;
+      min-height: 48px;
+      position: relative;
+      width: 100%;
+    }
+    .pay-label {
+      display: flex;
+      align-items: center;
+      font-size: 1.1em;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 8px 12px;
+      transition: background 0.3s, box-shadow 0.3s;
+      margin-bottom: 0;
+      flex: 1;
+      justify-content: flex-start;
+      width: auto;
+    }
+    .pay-label.selected {
+      background: #ffe3ec;
+      box-shadow: 0 2px 8px #ff3f6c22;
+    }
+    .pay-icon {
+      margin-right: 10px;
+      font-size: 1.5em;
+      width: 32px;
+      text-align: center;
+    }
+    .pay-fields {
+      opacity: 0;
+      max-height: 0;
+      pointer-events: none;
+      transition: opacity 0.5s, max-height 0.5s;
+      margin-left: 0;
+      margin-bottom: 0;
+      flex: 2;
+      width: 100%;
+    }
+    .pay-fields.show {
+      opacity: 1;
+      max-height: 200px;
+      pointer-events: auto;
+      margin-bottom: 12px;
+    }
+    .pay-fields input {
+      margin-bottom: 8px;
+      background: #fff6fa;
+      border: 1.5px solid #ffb6c1;
+    }
+    .pay-fields input:focus {
+      border-color: #ff3f6c;
+      background: #fff0f6;
+    }
+    #netBankingOption {
+      background: #f3f7ff;
+      border: 1.5px solid #b6c1ff;
+      color: #333;
+      font-weight: 500;
+      margin-left: 10px;
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Checkout</h1>
+  <div class="container fade-in">
+    <div class="product-summary" id="productSummary"></div>
+
+    <form id="checkoutForm" onsubmit="event.preventDefault(); placeOrder();">
+      <h2>Delivery Address</h2>
+      <label>Country/Region</label>
+      <select id="country" required>
+        <option value="India">India</option>
+        <option value="United States">United States</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="Australia">Australia</option>
+        <option value="Canada">Canada</option>
+        <option value="Germany">Germany</option>
+        <option value="France">France</option>
+        <option value="Singapore">Singapore</option>
+        <option value="Japan">Japan</option>
+        <option value="China">China</option>
+        <option value="Brazil">Brazil</option>
+        <option value="South Africa">South Africa</option>
+        <option value="Other">Other</option>
+      </select>
+      <label>Full name (First and Last name)</label>
+      <input type="text" id="fullName" required>
+      <label>Mobile number</label>
+      <input type="tel" id="mobile" required>
+      <label>Pincode</label>
+      <input type="text" id="pincode" required>
+      <label>Flat, House no., Building, Company, Apartment</label>
+      <input type="text" id="flat" required>
+      <label>Area, Street, Sector, Village</label>
+      <input type="text" id="area" required>
+      <label>Landmark</label>
+      <input type="text" id="landmark">
+      <label>Town/City</label>
+      <input type="text" id="city" required>
+      <label>State</label>
+      <input type="text" id="state" required>
+      <label>Delivery instructions (optional)</label>
+      <textarea id="instructions"></textarea>
+
+      <label>Shipping Method</label>
+      <select id="shippingMethod" required>
+        <option value="Standard">Standard (3-5 days)</option>
+        <option value="Express">Express (1-2 days)</option>
+        <option value="Same Day">Same Day Delivery</option>
+      </select>
+
+      <label>Discount Code</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="discountCode" placeholder="Enter code (e.g. SAVE10, FESTIVE20)" style="flex:1;" />
+        <button type="button" onclick="applyDiscount()">Apply</button>
+      </div>
+      <div id="discountMsg" style="color:green;margin-top:4px;"></div>
+
+      <h2>Payment method</h2>
+      <div class="payment-methods">
+         <div class="pay-row">
+           <input type="radio" name="paymentMethod" value="Credit Card" required onchange="showPaymentFields()" style="margin-right:12px;">
+           <label class="pay-label"><span class="pay-icon">💳</span> Credit or debit card
+             <span style="margin-left:10px;">
+               <img src="https://img.icons8.com/color/32/000000/visa.png" height="24"/>
+               <img src="https://img.icons8.com/color/32/000000/mastercard-logo.png" height="24"/>
+               <img src="https://img.icons8.com/color/32/000000/rupay.png" height="24"/>
+             </span>
+           </label>
+           <div id="cardFields" class="pay-fields">
+             <input type="text" id="cardName" placeholder="Name on Card" />
+             <input type="text" id="cardNumber" placeholder="Card Number" maxlength="19" />
+             <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" style="width:80px; margin-right:8px;" />
+             <input type="text" id="cardCVV" placeholder="CVV" maxlength="4" style="width:60px;" />
+           </div>
+         </div>
+         <div class="pay-row">
+           <input type="radio" name="paymentMethod" value="Net Banking" onchange="showPaymentFields()" style="margin-right:12px;">
+           <label class="pay-label"><span class="pay-icon">🏦</span> Net Banking
+             <select id="netBankingOption" onchange="showNetBankingFields()">
+               <option value="">Choose an Option</option>
+               <option value="SBI">SBI</option>
+               <option value="ICICI">ICICI</option>
+               <option value="HDFC">HDFC</option>
+               <option value="Axis">Axis</option>
+               <option value="KVB">KVB</option>
+             </select>
+           </label>
+           <div id="netBankingFields" class="pay-fields">
+             <input type="text" id="bankAccount" placeholder="Account Number" />
+             <input type="text" id="ifsc" placeholder="IFSC Code" />
+           </div>
+         </div>
+         <div class="pay-row">
+           <input type="radio" name="paymentMethod" value="UPI" onchange="showPaymentFields()" style="margin-right:12px;">
+           <label class="pay-label"><span class="pay-icon">📱</span> Other UPI Apps</label>
+           <div id="upiFields" class="pay-fields">
+             <input type="text" id="upiId" placeholder="Enter UPI ID (e.g. name@bank)" />
+           </div>
+         </div>
+         <div class="pay-row">
+           <input type="radio" name="paymentMethod" value="Cash on Delivery" onchange="showPaymentFields()" style="margin-right:12px;">
+           <label class="pay-label"><span class="pay-icon">💵</span> Cash on Delivery/Pay on Delivery</label>
+         </div>
+      </div>
+
+      <h2>Order Summary</h2>
+      <div id="orderSummary"></div>
+
+      <button type="submit">Place Order</button>
+    </form>
+    <div id="orderSuccess" style="display:none; text-align:center; padding:0; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; background-size:cover; background-position:center; color:#222;">
+      <div style="position:absolute; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:2;"></div>
+      <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; z-index:3;">
+        <svg width="120" height="120" viewBox="0 0 120 120" style="filter: drop-shadow(0 2px 8px #fff) drop-shadow(0 0 8px #4BB543); background:transparent; z-index:2; margin-bottom:24px;">
+          <circle cx="60" cy="60" r="55" stroke="#4BB543" stroke-width="8" fill="none"/>
+          <polyline id="tickMark" points="35,65 55,85 85,45" style="fill:none;stroke:#4BB543;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80;"/>
+        </svg>
+        <h2 style="color:#228B22; font-weight:900; font-size:2.6em; text-shadow:0 2px 12px #fff,0 0 8px #228B22,0 0 2px #222,0 2px 8px #000; z-index:2; margin:0 0 12px 0;">Order Placed Successfully!</h2>
+        <p style="font-size:1.5em; color:#222; font-weight:800; text-shadow:0 2px 12px #fff,0 0 8px #228B22,0 0 2px #222,0 2px 8px #000; z-index:2; margin:0;">Thank you for shopping with Vidhya.</p>
+      </div>
+      <div id="colorBlast" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:10000;"></div>
+    </div>
+  </div>
+
+  <script>
+    const product = JSON.parse(localStorage.getItem("selectedItem"));
+    if (!product) {
+      alert('No product selected. Please go back and select a product.');
+      window.location.href = 'shop.html';
+    }
+    document.getElementById("productSummary").innerHTML = `
+      <img src="${product.image}" alt="${product.name}">
+      <div class="product-info">
+        <h2>${product.name}</h2>
+        <p>Price: ₹${product.price}</p>
+      </div>
+    `;
+    let appliedDiscount = { code: '', amount: 0 };
+    function applyDiscount() {
+      const code = document.getElementById('discountCode').value.trim().toUpperCase();
+      let discount = 0;
+      if (code === 'SAVE10') {
+        discount = 10;
+        appliedDiscount = { code, amount: discount };
+        document.getElementById('discountMsg').innerText = '₹10 off applied!';
+      } else if (code === 'FESTIVE20') {
+        discount = Math.round(product.price * 0.2);
+        appliedDiscount = { code, amount: discount };
+        document.getElementById('discountMsg').innerText = '20% off applied!';
+      } else if (code) {
+        appliedDiscount = { code: '', amount: 0 };
+        document.getElementById('discountMsg').innerText = 'Invalid code.';
+      } else {
+        appliedDiscount = { code: '', amount: 0 };
+        document.getElementById('discountMsg').innerText = '';
+      }
+      updateOrderSummary();
+    }
+    function updateOrderSummary() {
+      const delivery = 40;
+      const promo = appliedDiscount.amount || 0;
+      const total = product.price * 1 + delivery;
+      const orderTotal = total - promo;
+      document.getElementById('orderSummary').innerHTML = `
+        <table style='width:100%;font-size:16px;'>
+          <tr><td>Items:</td><td style='text-align:right;'>₹${product.price.toFixed(2)}</td></tr>
+          <tr><td>Delivery:</td><td style='text-align:right;'>₹${delivery.toFixed(2)}</td></tr>
+          <tr><td>Total:</td><td style='text-align:right;'>₹${total.toFixed(2)}</td></tr>
+          <tr><td>Promotion Applied:</td><td style='text-align:right;'>-₹${promo.toFixed(2)}</td></tr>
+          <tr style='font-weight:bold;'><td>Order Total:</td><td style='text-align:right;'>₹${orderTotal.toFixed(2)}</td></tr>
+        </table>
+      `;
+    }
+
+    function showPaymentFields() {
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+      document.querySelectorAll('.pay-label').forEach(lab => lab.classList.remove('selected'));
+      if (method) {
+        // Find the label in the same pay-row as the checked radio
+        const checkedRadio = document.querySelector('input[name="paymentMethod"]:checked');
+        if (checkedRadio) {
+          const row = checkedRadio.closest('.pay-row');
+          if (row) row.querySelector('.pay-label').classList.add('selected');
+        }
+      }
+      document.getElementById('cardFields').className = 'pay-fields' + (method === 'Credit Card' ? ' show' : '');
+      document.getElementById('upiFields').className = 'pay-fields' + (method === 'UPI' ? ' show' : '');
+      if (method === 'Net Banking') {
+        showNetBankingFields();
+      } else {
+        document.getElementById('netBankingFields').className = 'pay-fields';
+      }
+    }
+    function showNetBankingFields() {
+      const bank = document.getElementById('netBankingOption').value;
+      document.getElementById('netBankingFields').className = 'pay-fields' + (bank ? ' show' : '');
+    }
+
+    function placeOrder() {
+      // Collect all details
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+      if (!paymentMethod) {
+        alert('Please select a payment method.');
+        return;
+      }
+      // Check required address fields
+      if (!document.getElementById('fullName').value ||
+          !document.getElementById('mobile').value ||
+          !document.getElementById('pincode').value ||
+          !document.getElementById('flat').value ||
+          !document.getElementById('area').value ||
+          !document.getElementById('city').value ||
+          !document.getElementById('state').value) {
+        alert('Please fill all required address fields.');
+        return;
+      }
+      let paymentUserName = '', bankName = '', transactionId = '';
+      const method = paymentMethod.value;
+      if (method === 'Credit Card') {
+        paymentUserName = document.getElementById('cardName').value;
+        transactionId = document.getElementById('cardNumber').value;
+        bankName = 'Card';
+      } else if (method === 'UPI') {
+        transactionId = document.getElementById('upiId').value;
+        bankName = 'UPI';
+      } else if (method === 'Net Banking') {
+        bankName = document.getElementById('netBankingOption').value;
+        transactionId = document.getElementById('bankAccount').value + ' / ' + document.getElementById('ifsc').value;
+      }
+      const orderData = {
+        product: {
+          name: product.name,
+          price: product.price,
+          image: product.image
+        },
+        quantity: 1,
+        fullName: document.getElementById('fullName').value,
+        mobile: document.getElementById('mobile').value,
+        email: '',
+        address: {
+          country: document.getElementById('country').value,
+          pincode: document.getElementById('pincode').value,
+          flat: document.getElementById('flat').value,
+          area: document.getElementById('area').value,
+          landmark: document.getElementById('landmark').value,
+          city: document.getElementById('city').value,
+          state: document.getElementById('state').value,
+          instructions: document.getElementById('instructions').value
+        },
+        modeOfPayment: paymentMethod.value,
+        paymentUserName,
+        bankName,
+        transactionId,
+        paymentConfirmed: true,
+        shippingMethod: document.getElementById('shippingMethod').value,
+        discount: appliedDiscount
+      };
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Order failed');
+        return res.json();
+      })
+      .then(() => {
+        document.getElementById('checkoutForm').style.display = 'none';
+        const orderSuccessDiv = document.getElementById('orderSuccess');
+        orderSuccessDiv.style.backgroundImage = `url('${product.image}')`;
+        orderSuccessDiv.style.backgroundSize = 'cover';
+        orderSuccessDiv.style.backgroundPosition = 'center';
+        orderSuccessDiv.style.position = 'fixed';
+        orderSuccessDiv.style.top = '0';
+        orderSuccessDiv.style.left = '0';
+        orderSuccessDiv.style.width = '100vw';
+        orderSuccessDiv.style.height = '100vh';
+        orderSuccessDiv.style.zIndex = '9999';
+        // Overlay is now always present above
+        orderSuccessDiv.style.display = 'block';
+        // Animate tick
+        const tick = document.getElementById('tickMark');
+        tick.style.transition = 'stroke-dashoffset 0.7s cubic-bezier(.4,2,.6,1)';
+        setTimeout(() => { tick.style.strokeDashoffset = 0; }, 100);
+        // Color blast animation for the whole page
+        const blast = document.getElementById('colorBlast');
+        blast.innerHTML = '';
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        for (let i = 0; i < 30; i++) {
+          const dot = document.createElement('div');
+          dot.style.position = 'fixed';
+          dot.style.width = '18px';
+          dot.style.height = '18px';
+          dot.style.borderRadius = '50%';
+          dot.style.background = `hsl(${Math.random()*360},90%,60%)`;
+          dot.style.left = `${centerX - 9}px`;
+          dot.style.top = `${centerY - 9}px`;
+          dot.style.opacity = '0.85';
+          dot.style.zIndex = '10001';
+          blast.appendChild(dot);
+          setTimeout(() => {
+            dot.style.transition = 'all 1.1s cubic-bezier(.17,.67,.83,.67)';
+            const angle = (i/30)*2*Math.PI;
+            const radius = Math.max(window.innerWidth, window.innerHeight) * 0.6;
+            dot.style.left = `${centerX + radius*Math.cos(angle) - 9}px`;
+            dot.style.top = `${centerY + radius*Math.sin(angle) - 9}px`;
+            dot.style.opacity = '0';
+          }, 80);
+        }
+        localStorage.removeItem('selectedItem');
+      })
+      .catch(() => {
+        alert('Order failed. Please try again.');
+      });
+    }
+    window.onload = function() {
+      showPaymentFields();
+      showNetBankingFields();
+    }
+  </script>
+</body>
+</html>

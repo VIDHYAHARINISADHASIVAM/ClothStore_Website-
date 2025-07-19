@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Product Management</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h2 { color: #d63384; }
+    input, select, textarea, button {
+      display: block; margin: 10px 0; padding: 10px; width: 300px;
+    }
+    .product-card {
+      border: 1px solid #ccc; padding: 15px; margin: 15px 0; border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Admin Panel - Add / Update / Delete Products</h2>
+  <form id="productForm">
+    <input type="text" id="name" placeholder="Product Name" required>
+    <input type="text" id="category" placeholder="Category" required>
+    <input type="text" id="subcategory" placeholder="Subcategory">
+    <input type="number" id="quantity" placeholder="Quantity" required>
+    <input type="number" id="price" placeholder="Price (₹)" required>
+    <input type="text" id="image" placeholder="Image URL" required>
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="text" id="supplierName" placeholder="Supplier Name">
+    <input type="text" id="supplierContact" placeholder="Supplier Contact">
+    <button type="submit">Add Product</button>
+  </form>
+
+  <hr>
+  <h2>Available Products</h2>
+  <div id="productList"></div>
+
+  <script>
+    async function fetchProducts() {
+      const res = await fetch('/api/products');
+      const products = await res.json();
+      const list = document.getElementById('productList');
+      list.innerHTML = '';
+      products.forEach(p => {
+        list.innerHTML += `
+          <div class="product-card">
+            <strong>${p.name}</strong><br>
+            ₹${p.price} | Qty: ${p.quantity}<br>
+            ${p.category} - ${p.subcategory || ''}<br>
+            <img src="${p.image}" width="100" alt="image"><br>
+            <button onclick="editProduct('${p._id}')">Edit</button>
+            <button onclick="deleteProduct('${p._id}')">Delete</button>
+          </div>
+        `;
+      });
+    }
+
+    document.getElementById('productForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = {
+        name: name.value,
+        category: category.value,
+        subcategory: subcategory.value,
+        quantity: quantity.value,
+        price: price.value,
+        description: description.value,
+        image: image.value,
+        supplier: {
+          name: supplierName.value,
+          contact: supplierContact.value
+        }
+      };
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      this.reset();
+      fetchProducts();
+    });
+
+    async function deleteProduct(id) {
+      if (confirm('Delete this product?')) {
+        await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        fetchProducts();
+      }
+    }
+
+    async function editProduct(id) {
+      const res = await fetch(`/api/products`);
+      const products = await res.json();
+      const product = products.find(p => p._id === id);
+      name.value = product.name;
+      category.value = product.category;
+      subcategory.value = product.subcategory;
+      quantity.value = product.quantity;
+      price.value = product.price;
+      description.value = product.description;
+      image.value = product.image;
+      supplierName.value = product.supplier.name;
+      supplierContact.value = product.supplier.contact;
+      document.getElementById('productForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const updated = {
+          name: name.value,
+          category: category.value,
+          subcategory: subcategory.value,
+          quantity: quantity.value,
+          price: price.value,
+          description: description.value,
+          image: image.value,
+          supplier: {
+            name: supplierName.value,
+            contact: supplierContact.value
+          }
+        };
+        await fetch(`/api/products/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+        productForm.reset();
+        fetchProducts();
+        productForm.onsubmit = null;
+      }
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>

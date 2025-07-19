@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; }
+    h2 { text-align: center; color: #ff3f6c; margin-top: 30px; }
+    .wishlist-list { max-width: 800px; margin: 30px auto; }
+    .wishlist-item {
+      display: flex; align-items: center; background: #fff; margin-bottom: 18px;
+      border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px;
+    }
+    .wishlist-item img { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-right: 24px; }
+    .wishlist-details { flex: 1; }
+    .wishlist-details h4 { margin: 0 0 8px 0; color: #333; }
+    .wishlist-details p { margin: 0 0 6px 0; color: #666; }
+    .wishlist-actions button {
+      margin-left: 10px; padding: 8px 16px; border: none; border-radius: 5px;
+      cursor: pointer; font-size: 15px; font-weight: bold;
+    }
+    .remove-btn { background: #eee; color: #ff3f6c; }
+    .cart-btn { background: #ff3f6c; color: #fff; }
+  </style>
+</head>
+<body>
+  <h2>My Wishlist</h2>
+  <div class="wishlist-list" id="wishlistList"></div>
+  <script>
+    function getUserEmail() {
+      let email = localStorage.getItem('userEmail');
+      if (!email) {
+        email = prompt('Enter your email to view wishlist:');
+        if (email) localStorage.setItem('userEmail', email);
+      }
+      return email;
+    }
+    async function loadWishlist() {
+      const email = getUserEmail();
+      if (!email) return;
+      const res = await fetch(`/api/wishlist?email=${encodeURIComponent(email)}`);
+      const wishlist = await res.json();
+      const list = document.getElementById('wishlistList');
+      if (!wishlist.length) {
+        list.innerHTML = '<p style="text-align:center;color:#888;">Your wishlist is empty.</p>';
+        return;
+      }
+      list.innerHTML = '';
+      wishlist.forEach(item => {
+        list.innerHTML += `
+          <div class="wishlist-item">
+            <img src="${item.image}" alt="${item.name}" />
+            <div class="wishlist-details">
+              <h4>${item.name}</h4>
+              <p>₹${item.price}</p>
+              <p>${item.category} ${item.subcategory ? ' - ' + item.subcategory : ''}</p>
+            </div>
+            <div class="wishlist-actions">
+              <button class="cart-btn" onclick="moveToCart('${item._id}', '${item.name}', ${item.price}, '${item.image}')">Move to Cart</button>
+              <button class="remove-btn" onclick="removeFromWishlist('${item._id}')">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+    async function removeFromWishlist(productId) {
+      const email = getUserEmail();
+      await fetch('/api/wishlist/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, productId })
+      });
+      loadWishlist();
+    }
+    function moveToCart(id, name, price, image) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = cart.find(item => item.productId === id);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ productId: id, name, quantity: 1, price, image });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Moved to cart!');
+    }
+    window.onload = loadWishlist;
+  </script>
+</body>
+</html> 

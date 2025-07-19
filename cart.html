@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart - Vidhya Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      background-color: #d63384;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .clear-btn-top {
+      position: absolute;
+      top: 25px;
+      right: 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 20px;
+      border-radius: 8px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-details h3 {
+      margin: 0 0 5px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .cart-item-details p {
+      margin: 0;
+      color: #666;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .remove-btn, .buy-btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .remove-btn {
+      background-color: #dc3545;
+    }
+
+    .remove-btn:hover {
+      background-color: #b02a37;
+    }
+
+    .buy-btn {
+      background-color: #28a745;
+    }
+
+    .buy-btn:hover {
+      background-color: #218838;
+    }
+
+    #checkoutForm {
+      display: none;
+      background: #fff;
+      border: 2px solid #e83e8c;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+
+    #checkoutForm h2 {
+      margin-top: 0;
+      color: #d63384;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .form-buttons {
+      text-align: right;
+    }
+
+    .form-buttons button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 5px;
+      background: #d63384;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .form-buttons button:hover {
+      background-color: #a61e5a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Your Cart</h1>
+    <button class="clear-btn-top" onclick="clearCart()">Clear Cart</button>
+  </header>
+
+  <div class="container">
+    <div id="cartItems"></div>
+
+  </div>
+
+  <script>
+    let currentBuyIndex = null;
+
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartItemsDiv = document.getElementById('cartItems');
+      cartItemsDiv.innerHTML = '';
+
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="cart-item-details">
+            <h3>${item.name}</h3>
+            <p>Price: ₹${item.price}</p>
+            <div style='margin:8px 0;'>
+              <button onclick="changeQuantity(${index}, -1)" style="width:28px;">-</button>
+              <input type="number" min="1" value="${item.quantity}" onchange="setQuantity(${index}, this.value)" style="width:40px;text-align:center;" />
+              <button onclick="changeQuantity(${index}, 1)" style="width:28px;">+</button>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="buy-btn" onclick="buyNowFromCart(${index})">Buy Now</button>
+            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        `;
+        cartItemsDiv.appendChild(itemDiv);
+      });
+    }
+
+    function removeFromCart(index) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items from cart?")) {
+        localStorage.removeItem('cart');
+        loadCart();
+      }
+    }
+
+    function buyNowFromCart(index) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (cart[index]) {
+        const item = cart[index];
+        localStorage.setItem('selectedItem', JSON.stringify(item));
+        window.location.href = 'checkout.html';
+      }
+    }
+
+    function changeQuantity(index, delta) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (!cart[index]) return;
+      cart[index].quantity = Math.max(1, (cart[index].quantity || 1) + delta);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+    function setQuantity(index, value) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (!cart[index]) return;
+      const qty = Math.max(1, parseInt(value) || 1);
+      cart[index].quantity = qty;
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    window.onload = loadCart;
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search Results - Vidhya</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #ff3f6c;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+    .card img {
+      width: 300px;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .card h3 {
+      margin: 10px 0;
+    }
+    .card p {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .card button {
+      padding: 8px 20px;
+      margin: 8px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      background-color: #007bff;
+      cursor: pointer;
+    }
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    .contact-popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -20%);
+      background: white;
+      padding: 30px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      z-index: 999;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .contact-popup h4 {
+      margin-top: 0;
+      color: #ff3f6c;
+    }
+    .contact-popup input,
+    .contact-popup textarea,
+    .contact-popup select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .contact-popup .quantity-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quantity-box button {
+      background-color: #ff3f6c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      font-size: 18px;
+      border-radius: 4px;
+    }
+    .quantity-box input {
+      width: 60px;
+      text-align: center;
+    }
+    .contact-popup button {
+      background-color: #28a745;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 998;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Search Results</h2>
+    <div class="card">
+      <img id="productImage" src="" alt="Product Image" onerror="this.src='https://via.placeholder.com/300x350?text=Image+Unavailable';">
+      <h3 id="productName"></h3>
+      <p id="productPrice"></p>
+      <button onclick="addToCart()">Add to Cart</button>
+      <button onclick="showContactForm()">Buy Now</button>
+    </div>
+  </div>
+
+  <!-- Overlay and Popup -->
+  <div class="overlay" id="overlay" onclick="closePopup()"></div>
+  <div class="contact-popup" id="contactPopup">
+    <h4>Enter Contact Details</h4>
+    <input type="text" id="custName" placeholder="Your Name" required>
+    <input type="tel" id="custPhone" placeholder="Phone Number" maxlength="10" required>
+    <input type="email" id="custEmail" placeholder="Email" required>
+    <textarea id="custAddress" placeholder="Address" rows="3" required></textarea>
+
+    <label>Quantity:</label>
+    <div class="quantity-box">
+      <button onclick="changeQuantity(-1)">-</button>
+      <input type="number" id="quantity" value="1" min="1">
+      <button onclick="changeQuantity(1)">+</button>
+    </div>
+
+    <label>Mode of Payment:</label>
+    <select id="paymentMode">
+      <option value="UPI">UPI</option>
+      <option value="Cash on Delivery">Cash on Delivery</option>
+      <option value="Net Banking">Net Banking</option>
+    </select>
+
+    <button onclick="placeOrder()">Place Order</button>
+  </div>
+
+  <script>
+    // Load search result
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    const img = params.get("img");
+    const price = params.get("price");
+
+    document.getElementById("productName").innerText = name;
+    document.getElementById("productPrice").innerText = "₹" + price;
+    document.getElementById("productImage").src = img;
+
+    function addToCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({ name, price, image: img });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Item added to cart!");
+    }
+
+    function showContactForm() {
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("contactPopup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("contactPopup").style.display = "none";
+    }
+
+    function changeQuantity(val) {
+      const qty = document.getElementById("quantity");
+      const current = parseInt(qty.value);
+      if (val === -1 && current > 1) qty.value = current - 1;
+      else if (val === 1) qty.value = current + 1;
+    }
+
+    function placeOrder() {
+      const nameInput = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      const address = document.getElementById("custAddress").value.trim();
+      const qty = document.getElementById("quantity").value;
+      const mode = document.getElementById("paymentMode").value;
+
+      if (!nameInput || !phone || !email || !address) {
+        alert("Please fill in all contact details.");
+        return;
+      }
+
+      alert(`Order placed!\n\nProduct: ${name}\nQuantity: ${qty}\nPayment Mode: ${mode}`);
+      closePopup();
+    }
+  </script>
+</body>
+</html>

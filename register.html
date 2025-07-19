@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cloth Store - Register</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease-in-out infinite;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      width: 350px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+    h2 { text-align: center; color: #ff7043; }
+    p { text-align: center; color: #eeeeee; }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    input::placeholder { color: #ccc; }
+    select {
+      background-color: rgba(255, 255, 255, 0.8);
+      color: black;
+      appearance: none;
+    }
+    button {
+      background-color: #ff7043;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover { background-color: #ff5722; }
+    .link {
+      margin-top: 12px;
+      text-align: center;
+      color: #00e5ff;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+    .password-wrapper {
+      position: relative;
+      margin-top: 10px;
+    }
+    .password-wrapper input {
+      padding-right: 40px;
+    }
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+    .success-box {
+      display: none;
+      align-items: center;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      padding: 10px;
+      margin-top: 10px;
+      color: green;
+    }
+    .burst {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .circle {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      position: absolute;
+      animation: explode 1s ease-out forwards;
+    }
+    @keyframes explode {
+      to {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;"></div>
+  <div class="container">
+    <h2>Register</h2>
+    <p>Create your account to continue</p>
+    <form id="registerForm" onsubmit="register(); return false;">
+      <input type="text" id="firstName" placeholder="Enter First Name" required />
+      <input type="text" id="lastName" placeholder="Enter Last Name" required />
+      <input type="text" id="initial" placeholder="Initial (e.g. S.)" required />
+      <input type="email" id="email" placeholder="Enter Email" required />
+      <select id="countryCode" required>
+        <option value="">Select Country Code</option>
+        <option value="+91">+91 (India)</option>
+        <option value="+1">+1 (USA)</option>
+        <option value="+44">+44 (UK)</option>
+        <option value="+61">+61 (Australia)</option>
+        <option value="+81">+81 (Japan)</option>
+      </select>
+      <input type="tel" id="phone" placeholder="10-digit Number" pattern="[0-9]{10}" required />
+
+      <!-- Password -->
+      <div class="password-wrapper">
+        <input
+          type="password"
+          id="password"
+          placeholder="Create Password"
+          pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,10}"
+          title="6–10 chars, with uppercase, lowercase & special character"
+          required />
+        <span class="eye-icon" onclick="togglePassword('password')">
+          <img src="https://img.icons8.com/ios-glyphs/30/visible--v1.png" width="20" />
+        </span>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="password-wrapper">
+        <input type="password" id="confirmPassword" placeholder="Re-enter Password" required oninput="checkMatch()" />
+        <span class="eye-icon" onclick="togglePassword('confirmPassword')">
+          <img src="https://img.icons8.com/ios-glyphs/30/visible--v1.png" width="20" />
+        </span>
+      </div>
+
+      <div id="successBox" class="success-box">
+        <span class="icon">✔</span> Passwords match!
+      </div>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <div class="link" onclick="sendOTP()">Forget Password?</div>
+
+    <div id="otpSection" style="display:none;">
+      <input type="text" id="otpInput" placeholder="Enter OTP" required />
+      <button onclick="verifyOTP()">Submit OTP</button>
+    </div>
+
+  </div>
+
+  <div class="burst" id="burst"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+  <script>
+    VANTA.NET({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0xffb6b9, // soft pink
+      backgroundColor: 0xfaf3f3, // very light background
+      points: 12.0,
+      maxDistance: 22.0,
+      spacing: 18.0
+    });
+  </script>
+  <script>
+    let generatedOTP = '', phoneWithCode = '';
+
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      const icon = input.nextElementSibling.querySelector('img');
+      if (input.type === "password") {
+        input.type = "text";
+        icon.src = "https://img.icons8.com/ios-glyphs/30/invisible--v1.png";
+      } else {
+        input.type = "password";
+        icon.src = "https://img.icons8.com/ios-glyphs/30/visible--v1.png";
+      }
+    }
+
+    function checkMatch() {
+      const p = document.getElementById("password").value;
+      const c = document.getElementById("confirmPassword").value;
+      document.getElementById("successBox").style.display = (p && c && p === c) ? "flex" : "none";
+    }
+
+    function register() {
+      const data = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        initial: document.getElementById("initial").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("countryCode").value + document.getElementById("phone").value,
+        password: document.getElementById("password").value,
+      };
+
+      if (data.password !== document.getElementById("confirmPassword").value) {
+        alert("Passwords do not match!"); return;
+      }
+
+      // Simulate registration (no backend OTP)
+      generatedOTP = Math.floor(100000 + Math.random() * 900000);
+      alert("Registration successful! Your OTP is: " + generatedOTP);
+      document.getElementById("otpSection").style.display = "block";
+    }
+
+    function sendOTP() {
+      generatedOTP = Math.floor(100000 + Math.random() * 900000);
+      alert("OTP sent to your phone: " + generatedOTP);
+      document.getElementById("otpSection").style.display = "block";
+    }
+
+    function verifyOTP() {
+      const otp = document.getElementById("otpInput").value;
+      if (otp === generatedOTP.toString()) {
+        alert("OTP Verified! Redirecting to login...");
+        window.location.href = "login.html";
+      } else {
+        alert("Invalid OTP. Please try again.");
+      }
+    }
+
+    function triggerColorBurst() {
+      const burst = document.getElementById("burst");
+      burst.innerHTML = "";
+      for (let i = 0; i < 40; i++) {
+        const dot = document.createElement("div");
+        dot.className = "circle";
+        dot.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        dot.style.left = `50%`;
+        dot.style.top = `50%`;
+        dot.style.setProperty('--x', `${Math.random() * 400 - 200}px`);
+        dot.style.setProperty('--y', `${Math.random() * 400 - 200}px`);
+        burst.appendChild(dot);
+      }
+      burst.style.display = "block";
+      setTimeout(() => burst.style.display = "none", 1000);
+    }
+  </script>
+</body>
+</html>

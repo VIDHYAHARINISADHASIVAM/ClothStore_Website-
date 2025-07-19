@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vidhya Homepage</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    header {
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 40px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    header .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff3f6c;
+    }
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #ff3f6c;
+    }
+    .search-bar {
+      flex: 1;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+    .search-bar button {
+      margin-left: 10px;
+      padding: 8px 15px;
+      border: none;
+      background-color: #ff3f6c;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart-icon {
+      margin-left: 15px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+    .hero-section {
+      background: url('https://i.pinimg.com/736x/ed/e9/57/ede95773193c4ddda60e1140be83d6bd.jpg') no-repeat center;
+      background-size: cover;
+      height: 400px;
+      position: relative;
+    }
+    .hero-section h1 {
+      color: white;
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      font-size: 48px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    }
+    .categories {
+      display: flex;
+      justify-content: space-around;
+      padding: 30px 10px;
+      background-color: white;
+      flex-wrap: wrap;
+    }
+    .category {
+      text-align: center;
+      margin: 10px;
+    }
+    .category img {
+      width: 350px;
+      height: 420px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .category p {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    footer {
+      background-color: #222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    footer a {
+      color: #ff3f6c;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">VIDHYA</div>
+    <nav>
+      <a href="men.html">Men</a>
+      <a href="women.html">Women</a>
+      <a href="kids.html">Kids</a>
+      <a href="home.html">Home & Living</a>
+      <a href="beauty.html">Beauty</a>
+      <a href="wishlist.html" style="color:#ff3f6c;font-weight:bold;">❤️ My Wishlist</a>
+      <a href="login.html">Login</a>
+    </nav>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search for products, brands and more">
+      <button onclick="searchItem()">Search</button>
+      <div class="cart-icon" onclick="goToCart()">🛒</div>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <h1>End of Season Sale is Live!</h1>
+  </section>
+
+  <section class="categories">
+    <div class="category">
+      <a href="men.html">
+        <img src="https://bombayvogue.in/cdn/shop/files/rn-image_picker_lib_temp_6d42d13d-206a-46bc-92dd-ca072aa6cc23.jpg?v=1717819178" alt="Men">
+        <p>Men</p>
+      </a>
+    </div>
+    <div class="category">
+      <a href="women.html">
+        <img src="https://i.pinimg.com/736x/f2/6c/f2/f26cf2104f4de629c849b03a3a0f10ed.jpg" alt="Women">
+        <p>Women</p>
+      </a>
+    </div>
+    <div class="category">
+      <a href="kids.html">
+        <img src="https://i.pinimg.com/736x/30/7b/03/307b03932a4f72bc9342e27ef4b8135b.jpg" alt="Kids">
+        <p>Kids</p>
+      </a>
+    </div>
+    <div class="category">
+      <a href="home.html">
+        <img src="https://m.media-amazon.com/images/I/5118HXyKhDL._UF894,1000_QL80_.jpg" alt="Home">
+        <p>Home</p>
+      </a>
+    </div>
+    <div class="category">
+      <a href="beauty.html">
+        <img src="https://i.pinimg.com/736x/53/bf/7d/53bf7d256fde70abaa25481af7a98b89.jpg" alt="Beauty">
+        <p>Beauty</p>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Vidhya Clone. Built for educational purpose.</p>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </footer>
+
+  <script>
+    const items = [
+      { name: 'Tutu Dress', price: 1099, img: 'https://i.pinimg.com/736x/91/cd/2c/91cd2c4e216e25a8a7b69492b2eb3894.jpg' },
+      { name: 'Pink Party Frock', price: 899, img: 'https://i.pinimg.com/736x/70/57/f7/7057f79b8f47a1894a1f6d35b3f8759f.jpg' },
+      { name: 'Kurtha Set', price: 999, img: 'https://i.pinimg.com/1200x/31/58/0e/31580ee286c6bdded4c5ca1cd0614d30.jpg' },
+      { name: 'Newborn Baby Set', price: 599, img: 'https://i.pinimg.com/736x/48/6b/d0/486bd05fb222d998a166ea4ee452299c.jpg' }
+      // Add more items as needed
+    ];
+
+    function searchItem() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const item = items.find(i => i.name.toLowerCase() === query);
+      if (item) {
+        window.location.href = `search.html?name=${encodeURIComponent(item.name)}&price=${item.price}&img=${encodeURIComponent(item.img)}`;
+      } else {
+        alert("Product not found");
+      }
+    }
+
+    function goToCart() {
+      window.location.href = 'cart.html';
+    }
+  </script>
+</body>
+</html>
